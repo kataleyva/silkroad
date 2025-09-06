@@ -1,46 +1,67 @@
-
 /**
  * Write a description of class SilkRoad here.
  *
  * @author Maria Katalina Leyva Diaz - Michelle Dayanna Ruiz Carranza
- * @version (a version number or a date)
+ * @version 7.09.2025
  */
 
 import java.lang.Math;
-import java.util.ArrayList;
-import java.util.ArrayList;
+import java.util.HashMap;
+
 public class SilkRoad{
-    private final ArrayList<Integer> nDays;
-    private int n;
-    public SilkRoad(int n){
-        this.nDays = new ArrayList<>();
-        if (n < 1  || n > 200000){
-            System.out.println("Number days between 2 and 200000");
-        } else {
-            for (int j : nDays){
-                int[] element = new ArrayList<>();
-                getConfiguration(element);
-                nDays.add(element);
-            }
+    private static HashMap<Integer, Integer> stores;
+    private static HashMap <Integer, Integer> initialStores;
+    private static HashMap <Integer, Integer> robots;
+    private static HashMap <Integer, Integer> initialRobots;
+    private static int idRobot = 0;
+    private final int lenRoad;
 
-        }
+    public SilkRoad(int lengthRoad) {
+        lenRoad = lengthRoad;
+        stores = new HashMap<>();
+        initialStores = new HashMap<>();
+        robots = new HashMap<>();
+        initialRobots = new HashMap<>();
+        System.out.println("Se creó la ruta de seda de longitud "+lenRoad);
+        return;
     }
-    public void getConfiguration(int[] element){
-        Scanner sc = new Scanner(System.in);
-        tring input = sc.nextLine();
-        this.nDays = input.split(" ");
-        if (this.nDays.get(0) != 1 || this.nDays.get(0) != 2){
-            System.out.println("enter 1 to add a new robot or 2 to add a new store");
-        } else {
-            if (this.nDays.get(0) == 1){
-                int i = this.nDays.get(0); //Obtain if is a new store or new robot
-                int x = this.nDays.get(1); //Obtain the location
-            } else {
-                int i = this.nDays.get(0); //Obtain if is a new store or new robot
-                int x = this.nDays.get(1); //Obtain the location
-                int c = this.nDays.get(2); //Obtain the number of tenges at the store
+
+    public void placeStore(int location, int tenges){
+        stores.put(location, tenges);
+        initialStores.put(location, tenges);
+        return;
+    }
+
+    public void removeStore(int location){
+        stores.remove(location);
+        return;
+    }
+
+    public void placeRobot(int location){
+        idRobot ++;
+        Robot robot = new Robot(idRobot, location);
+        robots.put(robot.getId(), robot.getLocation());
+        initialRobots.put(robot.getId(), robot.getLocation());
+        return;
+    }
+
+    public void ressuplyStores(){
+        for (var i : stores.entrySet()){
+            if (i.getValue() == 0){
+                int location = i.getKey();
+                int initialTenge = initialStores.get(location);
+                i.setValue(initialTenge);
             }
         }
+      return;
+    };
 
+    public void returnRobots(){
+        for (var i : robots.entrySet()){
+            int robotId = i.getKey();
+            int initialLocation = initialRobots.get(robotId);
+            i.setValue(initialLocation);
+        }
+        return;
     }
 }
