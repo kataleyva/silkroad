@@ -12,7 +12,7 @@ public class Store {
        base = new Rectangle();
        this.location = location;
        this.tengeInitial = tenges;
-        this.tenge = tenges;
+       this.tenge = tenges;
     }
 
     public int getLocation() {
@@ -21,10 +21,6 @@ public class Store {
 
     public int getTenge() {
         return this.tenge;
-    }
-
-    public int getTengeInitial() {
-        return this.tengeInitial;
     }
 
     public void removeStore(){

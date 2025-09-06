@@ -27,6 +27,7 @@ public class SilkRoad{
     }
 
     public void placeStore(int location, int tenges){
+        Store store = new Store(location, tenges);
         stores.put(location, tenges);
         initialStores.put(location, tenges);
         return;
