@@ -10,7 +10,6 @@ comment4.params=location
 comment4.target=void\ placeRobot(int)
 comment5.params=location
 comment5.target=void\ removeRobot(int)
-comment5.text=public\ void\ removeRobot(int\ location){\r\n\ \ \ \ \ \ \ \ for\ (var\ i\ \:\ robots.entrySet()){\r\n\ \ \ \ \ \ \ \ \ \ \ \ Robot\ robot\ \=\ i.getValue();\r\n\ \ \ \ \ \ \ \ \ \ \ \ if(location\ \=\=\ robot.getLoc()){\r\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ robot.removeRobot();\r\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int\ id\ \=\ robot.getId();\r\n\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ this.robots.remove(id);\r\n\ \ \ \ \ \ \ \ \ \ \ \ }\r\n\ \ \ \ \ \ \ \ }\r\n\ \ \ \ \ \ \ \ return;\r\n}
 comment6.params=
 comment6.target=void\ ressuplyStores()
 comment7.params=

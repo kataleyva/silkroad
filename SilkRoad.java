@@ -28,7 +28,6 @@ public class SilkRoad{
         System.out.println("Se creó la ruta de seda de longitud "+lenRoad);
         return;
     }
-    
 
     public void placeStore(int location, int tenges){
         Store store = new Store(this.posicion[location], tenges);
@@ -54,14 +53,17 @@ public class SilkRoad{
         return;
     }
     
-    public void removeRobot(int location){
-        for(Robot robot : robots.values()){
-            robot.removeRobot();
-            int id = robot.getId();
-            this.robots.remove(id);
+    public void removeRobot(int location) {
+        var it = robots.values().iterator();
+        while (it.hasNext()) {
+            var robot = it.next();
+            if (robot.getLoc() == location) {
+                robot.removeRobot();
+                it.remove();
+            }
         }
     }
-    
+
     public void ressuplyStores(){
         for (var i : stores.entrySet()){
             if (i.getValue().getTenge() == 0){
@@ -70,7 +72,7 @@ public class SilkRoad{
                 i.setValue(initialTenge);
             }
         }
-      return;
+          return;
     };
 
     public void returnRobots(){
