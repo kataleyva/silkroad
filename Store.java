@@ -3,7 +3,7 @@ import java.util.HashMap;
 
 
 public class Store {
-    private Rectangle base;
+    public Rectangle base;
     private int[] location;
     private int tengeInitial;
     private int tenge;

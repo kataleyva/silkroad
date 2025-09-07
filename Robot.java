@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Robot {
-    private Circle robot;
+    public Circle robot;
     private int loc;
     private static int id;
     private int[] location;
