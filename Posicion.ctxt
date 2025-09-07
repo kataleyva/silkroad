@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=Posicion
+comment1.params=size
+comment1.target=int[][]\ generateSpiral(int)
+numComments=2

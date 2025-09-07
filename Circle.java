@@ -26,6 +26,14 @@ public class Circle{
         isVisible = false;
     }
 
+    public Circle(int xPosition, int yPosition){
+        this.diameter = 25;
+        this.xPosition = xPosition + 300;
+        this.yPosition = yPosition + 300;
+        color = "red";
+        isVisible = true;
+    }    
+    
     public void makeVisible(){
         isVisible = true;
         draw();

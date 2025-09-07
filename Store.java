@@ -4,18 +4,19 @@ import java.util.HashMap;
 
 public class Store {
     private Rectangle base;
-    private int location;
+    private int[] location;
     private int tengeInitial;
     private int tenge;
 
-    public Store(int location, int tenges) {
-       base = new Rectangle();
+    public Store(int[] location, int tenges) {
+       this.base = new Rectangle(location[0], location[1]);
        this.location = location;
        this.tengeInitial = tenges;
        this.tenge = tenges;
+       this.base.makeVisible();
     }
 
-    public int getLocation() {
+    public int[] getLocation() {
         return this.location;
     }
 
@@ -24,6 +25,6 @@ public class Store {
     }
 
     public void removeStore(){
-        base.erase();
+        this.base.makeInvisible();
     }
 }

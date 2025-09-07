@@ -32,6 +32,14 @@ public class Rectangle{
         isVisible = false;
     }
 
+        public Rectangle(int xPosition, int yPosition){
+        height = 30;
+        width = 30;
+        this.xPosition = xPosition + 300;
+        this.yPosition = yPosition + 300;
+        color = "black";
+        isVisible = true;
+    }    
 
     /**
      * Make this rectangle visible. If it was already visible, do nothing.

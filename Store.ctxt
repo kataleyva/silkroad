@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=Store
+comment1.params=location\ tenges
+comment1.target=Store(int[],\ int)
+comment2.params=
+comment2.target=int[]\ getLocation()
+comment3.params=
+comment3.target=int\ getTenge()
+comment4.params=
+comment4.target=void\ removeStore()
+numComments=5
