@@ -97,10 +97,13 @@ public class SilkRoad{
             robot.removeRobot();
             int newLocation = location + meters;
             Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
+            
             robots.remove(getFirstRobotAtLocation(location).getId());
             robots.put(robot.getId(), robotNewLocation);
+            
             if (stores.containsValue(getFirstStoreAtLocation(location))){
                 takeTenges(robotNewLocation, getFirstStoreAtLocation(location));
+                return;
             }
         } else {
             return;
