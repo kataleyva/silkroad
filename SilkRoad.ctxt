@@ -36,6 +36,6 @@ comment8.params=
 comment8.target=void\ reboot()
 comment8.text=\r\n\ Reinicia\ la\ ruta\ de\ seda\:\ tiendas\ y\ robots\ como\ fueron\ adicionados\r\n\ Utiliza\ los\ m\u00E9todos\ ya\ existentes\ ressuplyStores()\ y\ returnRobots()\r\n
 comment9.params=
-comment9.target=int\ profit()
+comment9.target=int\ porfit()
 comment9.text=\r\n\ Consulta\ las\ ganancias\ totales\ obtenidas\r\n\ En\ el\ contexto\ del\ problema\:\ profit\ \=\ tenges\ recolectados\ -\ costo\ de\ movimiento\r\n\ @return\ ganancia\ total\ acumulada\ por\ todos\ los\ robots\r\n
 numComments=16

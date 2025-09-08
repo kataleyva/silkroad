@@ -81,18 +81,13 @@ public class SilkRoad{
         }
         return;
     }
-    
     /**
  * Reinicia la ruta de seda: tiendas y robots como fueron adicionados
  * Utiliza los métodos ya existentes ressuplyStores() y returnRobots()
  */
 public void reboot(){
-    // Usar el método ya implementado para reabastecer todas las tiendas
     ressuplyStores();
-    
-    // Usar el método ya implementado para retornar robots a posiciones iniciales
     returnRobots();
-    
     System.out.println("Ruta de seda reiniciada - Tiendas reabastecidas y robots reposicionados");
 }
 
@@ -101,17 +96,13 @@ public void reboot(){
  * En el contexto del problema: profit = tenges recolectados - costo de movimiento
  * @return ganancia total acumulada por todos los robots
  */
-public int profit(){
-    int totalProfit = 0;
-    
+public int porfit(){
+    int totalPorfit = 0;
     // Sumar todos los tenges recolectados por los robots
     for(Robot robot : robots.values()){
-        totalProfit += robot.getTenge();
+        totalPorfit += robot.getTenge();
     }
-    
-    // En una implementación completa, aquí se restaría el costo de movimiento
-    // Por ahora retornamos solo los tenges recolectados
-    return totalProfit;
+    return totalPorfit;
 }
 
 /**
@@ -121,12 +112,10 @@ public int profit(){
 public int[][] stores(){
     int[][] storesInfo = new int[stores.size()][2];
     int index = 0;
-    
     // Recorrer el HashMap de tiendas usando el patrón ya establecido en ressuplyStores()
     for (var entry : stores.entrySet()){
         int location = entry.getKey();
-        Store store = entry.getValue();
-        
+        Store store = entry.getValue();  
         storesInfo[index][0] = location;           // posición en la ruta
         storesInfo[index][1] = store.getTenge();   // tenges disponibles actualmente
         index++;
@@ -141,8 +130,7 @@ public int[][] stores(){
  */
 public int[][] robots(){
     int[][] robotsInfo = new int[robots.size()][3];
-    int index = 0;
-    
+    int index = 0; 
     // Recorrer el HashMap de robots usando el patrón ya establecido en returnRobots()
     for (var entry : robots.entrySet()){
         int robotId = entry.getKey();
@@ -168,16 +156,14 @@ public void makeVisible(){
         if(store.base != null){
             store.base.makeVisible();
         }
-    }
-    
+    }   
     // Hacer visibles todos los robots, recorriendo como en returnRobots()
     for (var entry : robots.entrySet()){
         Robot robot = entry.getValue();
         if(robot.robot != null){
             robot.robot.makeVisible();
         }
-    }
-    
+    } 
     System.out.println("Simulador de la Ruta de Seda ahora es visible");
 }
 
@@ -189,15 +175,13 @@ public void makeInvisible(){
     // Hacer invisibles todas las tiendas, siguiendo el patrón de stores
     for (var entry : stores.entrySet()){
         Store store = entry.getValue();
-        store.base.makeInvisible(); // Usar método público de Store
-    }
-    
+        store.base.makeInvisible();
+    } 
     // Hacer invisibles todos los robots, siguiendo el patrón de robots
     for (var entry : robots.entrySet()){
         Robot robot = entry.getValue();
-        robot.robot.makeInvisible(); // Usar método público de Robot
+        robot.robot.makeInvisible();
     }
-    
     System.out.println("Simulador de la Ruta de Seda ahora es invisible");
 }
 
@@ -206,27 +190,22 @@ public void makeInvisible(){
  * Utiliza los métodos removeStore() y removeRobot() ya disponibles
  */
 public void finish(){
-    // Remover todas las tiendas usando el método ya implementado en Store
     for (var entry : stores.entrySet()){
         Store store = entry.getValue();
         store.removeStore(); // Usa el método ya implementado
     }
-    
     // Remover todos los robots, siguiendo el patrón de removeRobot() existente
     for (var entry : robots.entrySet()){
         Robot robot = entry.getValue();
         robot.removeRobot(); // Usa el método ya implementado
     }
-    
     // Limpiar todas las colecciones usando clear() como en el constructor
     stores.clear();
     initialStores.clear();
     robots.clear();
     initialRobots.clear();
-    
     // Resetear el contador de IDs siguiendo el patrón establecido
     idRobot = 0;
-    
     System.out.println("Simulador de la Ruta de Seda terminado - Todos los recursos liberados");
 }
 
@@ -236,28 +215,17 @@ public void finish(){
  */
 public boolean ok(){
     try {
-        // Verificaciones básicas para asegurar que el simulador está en estado válido
-        // Si alguna estructura básica es null, la última operación falló
         if(stores == null || robots == null || initialStores == null || initialRobots == null){
             return false;
         }
-        
-        // Si la ruta no tiene longitud válida, algo salió mal
         if(lenRoad <= 0){
             return false;
         }
-        
-        // Si la matriz de posiciones es inválida, las operaciones fallarán
         if(posicion == null || posicion.length != lenRoad){
             return false;
         }
-        
-        // Si llegamos aquí, las estructuras básicas están bien
-        // La última operación se realizó correctamente
         return true;
-        
     } catch (Exception e) {
-        // Si ocurrió alguna excepción, la última operación falló
         return false;
     }
 }
