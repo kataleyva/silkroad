@@ -37,4 +37,13 @@ public class Robot {
     public void removeRobot(){
         this.robot.makeInvisible();
     }
+
+    public void setLoc(int loc) {
+        this.loc = loc;
+    }
+
+    public void setLocation(int[] location) {
+        removeRobot();
+        this.location = location;
+    }
 }

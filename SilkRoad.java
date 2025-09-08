@@ -30,7 +30,7 @@ public class SilkRoad{
     }
 
     public void placeStore(int location, int tenges){
-        Store store = new Store(this.posicion[location], tenges);
+        Store store = new Store(this.posicion[location], tenges, location);
         stores.put(location, store);
         initialStores.put(location, store);
         return;
@@ -43,13 +43,11 @@ public class SilkRoad{
         return;
     }
 
-    public void placeRobot(int location){
-        idRobot ++;
+    public void placeRobot(int location) {
+        idRobot++;
         Robot robot = new Robot(idRobot, posicion[location], location);
-        System.out.println(robot.getId());
         robots.put(robot.getId(), robot);
         initialRobots.put(robot.getId(), robot);
-        System.out.println(location);
         return;
     }
     
@@ -62,6 +60,52 @@ public class SilkRoad{
                 it.remove();
             }
         }
+    }
+
+    private Robot getFirstRobotAtLocation(int location) {
+        var it = robots.values().iterator();
+        while (it.hasNext()) {
+            Robot robot = it.next();
+            if (robot.getLoc() == location) {
+                return robot;
+            }
+        }
+        return null;
+    }
+
+    private Store getFirstStoreAtLocation(int location) {
+        var it = stores.values().iterator();
+        while (it.hasNext()) {
+            Store store = it.next();
+            if (store.getLoc() == location) {
+                return store;
+            }
+        }
+        return null;
+    }
+
+    private int takeTenges(Robot robot, Store store) {
+        int newTenges = 0;
+        int newRobotTenges = store.getTenge() + robot.getTenge();
+        store.setTenge(newTenges);
+        return newRobotTenges;
+    }
+
+    public void moveRobot(int location, int meters){
+        if (meters != 0){
+            Robot robot = getFirstRobotAtLocation(location);
+            robot.removeRobot();
+            int newLocation = location + meters;
+            Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
+            robots.remove(getFirstRobotAtLocation(location).getId());
+            robots.put(robot.getId(), robotNewLocation);
+            if (stores.containsValue(getFirstStoreAtLocation(location))){
+                takeTenges(robotNewLocation, getFirstStoreAtLocation(location));
+            }
+        } else {
+            return;
+        }
+
     }
 
     public void ressuplyStores(){
