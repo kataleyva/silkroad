@@ -1,22 +1,30 @@
-/**
- * Write a description of class SilkRoad here.
- *
- * @author Maria Katalina Leyva Diaz - Michelle Dayanna Ruiz Carranza
- * @version 7.09.2025
- */
-
-import java.lang.Math;
 import java.util.HashMap;
 
-public class SilkRoad{
+/**
+ * Clase que representa el simulador de la Ruta de la Seda.
+ * 
+ * Esta clase permite administrar tiendas (Stores) y robots (Robots)
+ * que interactúan en una ruta representada en espiral. 
+ * Se pueden colocar y remover tiendas y robots, mover robots a través de la ruta,
+ * reiniciar el sistema, calcular las ganancias totales y visualizar la simulación.
+ * 
+ * Además, mantiene registros iniciales de tiendas y robots para permitir
+ * un reseteo o reinicio de las condiciones iniciales.
+ */
+public class SilkRoad {
     private static HashMap<Integer, Store> stores;
-    private static HashMap <Integer, Store> initialStores;
-    private static HashMap <Integer, Robot> robots;
-    private static HashMap <Integer, Robot> initialRobots;
+    private static HashMap<Integer, Store> initialStores;
+    private static HashMap<Integer, Robot> robots;
+    private static HashMap<Integer, Robot> initialRobots;
     private static int idRobot = 0;
     private final int lenRoad;
     private int[][] posicion;
 
+    /**
+     * Constructor de la clase SilkRoad.
+     * 
+     * @param lengthRoad Longitud de la ruta de seda.
+     */
     public SilkRoad(int lengthRoad) {
         this.lenRoad = lengthRoad;
         this.stores = new HashMap<>();
@@ -24,33 +32,52 @@ public class SilkRoad{
         this.robots = new HashMap<>();
         this.initialRobots = new HashMap<>();
         this.posicion = Posicion.generateSpiral(lenRoad);
-    
-        System.out.println("Se creó la ruta de seda de longitud "+lenRoad);
-        return;
+
+        System.out.println("Se creó la ruta de seda de longitud " + lenRoad);
     }
 
+    /**
+     * Coloca una tienda en la ruta en una ubicación específica.
+     * 
+     * @param location Posición en la ruta.
+     * @param tenges   Cantidad inicial de tenges de la tienda.
+     */
     public void placeStore(int location, int tenges){
         Store store = new Store(this.posicion[location], tenges, location);
         stores.put(location, store);
         initialStores.put(location, store);
-        return;
     }
 
+    /**
+     * Elimina una tienda de la ruta en una ubicación específica.
+     * 
+     * @param location Posición de la tienda a eliminar.
+     */
     public void removeStore(int location){
         Store store = stores.get(location);
-        store.removeStore();
-        stores.remove(location);
-        return;
+        if (store != null) {
+            store.removeStore();
+            stores.remove(location);
+        }
     }
 
+    /**
+     * Coloca un robot en la ruta en una ubicación específica.
+     * 
+     * @param location Posición inicial del robot.
+     */
     public void placeRobot(int location) {
         idRobot++;
         Robot robot = new Robot(idRobot, posicion[location], location);
         robots.put(robot.getId(), robot);
         initialRobots.put(robot.getId(), robot);
-        return;
     }
-    
+
+    /**
+     * Elimina un robot de una ubicación específica en la ruta.
+     * 
+     * @param location Posición del robot a eliminar.
+     */
     public void removeRobot(int location) {
         var it = robots.values().iterator();
         while (it.hasNext()) {
@@ -62,6 +89,12 @@ public class SilkRoad{
         }
     }
 
+    /**
+     * Obtiene el primer robot que se encuentre en una ubicación dada.
+     * 
+     * @param location Posición en la ruta.
+     * @return El primer robot en la posición o null si no existe.
+     */
     private Robot getFirstRobotAtLocation(int location) {
         var it = robots.values().iterator();
         while (it.hasNext()) {
@@ -73,6 +106,12 @@ public class SilkRoad{
         return null;
     }
 
+    /**
+     * Obtiene la primera tienda en una ubicación dada.
+     * 
+     * @param location Posición en la ruta.
+     * @return La primera tienda en la posición o null si no existe.
+     */
     private Store getFirstStoreAtLocation(int location) {
         var it = stores.values().iterator();
         while (it.hasNext()) {
@@ -84,6 +123,13 @@ public class SilkRoad{
         return null;
     }
 
+    /**
+     * Transfiere los tenges de una tienda a un robot.
+     * 
+     * @param robot Robot que recibe los tenges.
+     * @param store Tienda que transfiere los tenges.
+     * @return Cantidad total de tenges acumulados en el robot después de la transacción.
+     */
     private int takeTenges(Robot robot, Store store) {
         int newTenges = 0;
         int newRobotTenges = store.getTenge() + robot.getTenge();
@@ -91,26 +137,33 @@ public class SilkRoad{
         return newRobotTenges;
     }
 
+    /**
+     * Mueve un robot desde una ubicación a otra, a través de una cantidad de metros.
+     * 
+     * @param location Ubicación actual del robot.
+     * @param meters   Cantidad de posiciones que debe avanzar.
+     */
     public void moveRobot(int location, int meters){
         if (meters != 0){
             Robot robot = getFirstRobotAtLocation(location);
+            if (robot == null) return;
+
             robot.removeRobot();
             int newLocation = location + meters;
             Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
-            
-            robots.remove(getFirstRobotAtLocation(location).getId());
-            robots.put(robot.getId(), robotNewLocation);
-            
-            if (stores.containsValue(getFirstStoreAtLocation(location))){
-                takeTenges(robotNewLocation, getFirstStoreAtLocation(location));
-                return;
-            }
-        } else {
-            return;
-        }
 
+            robots.remove(robot.getId());
+            robots.put(robot.getId(), robotNewLocation);
+
+            if (stores.containsValue(getFirstStoreAtLocation(newLocation))){
+                takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
+            }
+        }
     }
 
+    /**
+     * Reabastece las tiendas que se quedaron sin tenges.
+     */
     public void ressuplyStores(){
         for (var i : stores.entrySet()){
             if (i.getValue().getTenge() == 0){
@@ -119,164 +172,153 @@ public class SilkRoad{
                 i.setValue(initialTenge);
             }
         }
-          return;
-    };
+    }
 
+    /**
+     * Retorna los robots a su ubicación inicial.
+     */
     public void returnRobots(){
         for (var i : robots.entrySet()){
             int robotId = i.getKey();
             Robot initialLocation = initialRobots.get(robotId);
             i.setValue(initialLocation);
         }
-        return;
     }
+
     /**
- * Reinicia la ruta de seda: tiendas y robots como fueron adicionados
- * Utiliza los métodos ya existentes ressuplyStores() y returnRobots()
- */
-public void reboot(){
-    ressuplyStores();
-    returnRobots();
-    System.out.println("Ruta de seda reiniciada - Tiendas reabastecidas y robots reposicionados");
-}
-
-/**
- * Consulta las ganancias totales obtenidas
- * En el contexto del problema: profit = tenges recolectados - costo de movimiento
- * @return ganancia total acumulada por todos los robots
- */
-public int porfit(){
-    int totalPorfit = 0;
-    // Sumar todos los tenges recolectados por los robots
-    for(Robot robot : robots.values()){
-        totalPorfit += robot.getTenge();
+     * Reinicia la simulación de la Ruta de la Seda,
+     * reabasteciendo tiendas y retornando robots a sus posiciones iniciales.
+     */
+    public void reboot(){
+        ressuplyStores();
+        returnRobots();
+        System.out.println("Ruta de seda reiniciada - Tiendas reabastecidas y robots reposicionados");
     }
-    return totalPorfit;
-}
 
-/**
- * Consulta la información de las tiendas en la ruta de seda
- * @return arreglo con información de las tiendas [ubicación, tenges actuales]
- */
-public int[][] stores(){
-    int[][] storesInfo = new int[stores.size()][2];
-    int index = 0;
-    // Recorrer el HashMap de tiendas usando el patrón ya establecido en ressuplyStores()
-    for (var entry : stores.entrySet()){
-        int location = entry.getKey();
-        Store store = entry.getValue();  
-        storesInfo[index][0] = location;           // posición en la ruta
-        storesInfo[index][1] = store.getTenge();   // tenges disponibles actualmente
-        index++;
-    }
-    
-    return storesInfo;
-}
-
-/**
- * Consulta la información de los robots en la ruta de seda
- * @return arreglo con información de los robots [id, ubicación actual, tenges recolectados]
- */
-public int[][] robots(){
-    int[][] robotsInfo = new int[robots.size()][3];
-    int index = 0; 
-    // Recorrer el HashMap de robots usando el patrón ya establecido en returnRobots()
-    for (var entry : robots.entrySet()){
-        int robotId = entry.getKey();
-        Robot robot = entry.getValue();
-        
-        robotsInfo[index][0] = robot.getId();    // id único del robot
-        robotsInfo[index][1] = robot.getLoc();   // ubicación actual en la ruta
-        robotsInfo[index][2] = robot.getTenge(); // tenges recolectados hasta ahora
-        index++;
-    }
-    
-    return robotsInfo;
-}
-
-/**
- * Hace visible el simulador mostrando todos los elementos
- * Permite ver la representación visual de la ruta de seda
- */
-public void makeVisible(){
-    // Hacer visibles todas las tiendas, recorriendo como en ressuplyStores()
-    for (var entry : stores.entrySet()){
-        Store store = entry.getValue();
-        if(store.base != null){
-            store.base.makeVisible();
+    /**
+     * Calcula la ganancia total obtenida por los robots.
+     * 
+     * @return Cantidad total de tenges obtenida.
+     */
+    public int profit(){
+        int totalProfit = 0;
+        for(Robot robot : robots.values()){
+            totalProfit += robot.getTenge();
         }
-    }   
-    // Hacer visibles todos los robots, recorriendo como en returnRobots()
-    for (var entry : robots.entrySet()){
-        Robot robot = entry.getValue();
-        if(robot.robot != null){
-            robot.robot.makeVisible();
+        return totalProfit;
+    }
+
+    /**
+     * Devuelve información de las tiendas actuales en el simulador.
+     * 
+     * @return Matriz con ubicación y tenges de cada tienda.
+     */
+    public int[][] stores(){
+        int[][] storesInfo = new int[stores.size()][2];
+        int index = 0;
+        for (var entry : stores.entrySet()){
+            int location = entry.getKey();
+            Store store = entry.getValue();
+            storesInfo[index][0] = location;
+            storesInfo[index][1] = store.getTenge();
+            index++;
         }
-    } 
-    System.out.println("Simulador de la Ruta de Seda ahora es visible");
-}
-
-/**
- * Hace invisible el simulador ocultando todos los elementos
- * Permite que el simulador funcione en modo invisible para mejor rendimiento
- */
-public void makeInvisible(){
-    // Hacer invisibles todas las tiendas, siguiendo el patrón de stores
-    for (var entry : stores.entrySet()){
-        Store store = entry.getValue();
-        store.base.makeInvisible();
-    } 
-    // Hacer invisibles todos los robots, siguiendo el patrón de robots
-    for (var entry : robots.entrySet()){
-        Robot robot = entry.getValue();
-        robot.robot.makeInvisible();
+        return storesInfo;
     }
-    System.out.println("Simulador de la Ruta de Seda ahora es invisible");
-}
 
-/**
- * Termina el simulador y libera todos los recursos
- * Utiliza los métodos removeStore() y removeRobot() ya disponibles
- */
-public void finish(){
-    for (var entry : stores.entrySet()){
-        Store store = entry.getValue();
-        store.removeStore(); // Usa el método ya implementado
+    /**
+     * Devuelve información de los robots actuales en el simulador.
+     * 
+     * @return Matriz con id, ubicación y tenges de cada robot.
+     */
+    public int[][] robots(){
+        int[][] robotsInfo = new int[robots.size()][3];
+        int index = 0;
+        for (var entry : robots.entrySet()){
+            int robotId = entry.getKey();
+            Robot robot = entry.getValue();
+            robotsInfo[index][0] = robot.getId();
+            robotsInfo[index][1] = robot.getLoc();
+            robotsInfo[index][2] = robot.getTenge();
+            index++;
+        }
+        return robotsInfo;
     }
-    // Remover todos los robots, siguiendo el patrón de removeRobot() existente
-    for (var entry : robots.entrySet()){
-        Robot robot = entry.getValue();
-        robot.removeRobot(); // Usa el método ya implementado
-    }
-    // Limpiar todas las colecciones usando clear() como en el constructor
-    stores.clear();
-    initialStores.clear();
-    robots.clear();
-    initialRobots.clear();
-    // Resetear el contador de IDs siguiendo el patrón establecido
-    idRobot = 0;
-    System.out.println("Simulador de la Ruta de Seda terminado - Todos los recursos liberados");
-}
 
-/**
- * Verifica si la última operación se realizó correctamente
- * @return true si la última operación fue exitosa, false en caso contrario
- */
-public boolean ok(){
-    try {
-        if(stores == null || robots == null || initialStores == null || initialRobots == null){
+    /**
+     * Hace visible la simulación gráfica de la Ruta de la Seda.
+     */
+    public void makeVisible(){
+        for (var entry : stores.entrySet()){
+            Store store = entry.getValue();
+            if(store.base != null){
+                store.base.makeVisible();
+            }
+        }
+        for (var entry : robots.entrySet()){
+            Robot robot = entry.getValue();
+            robot.makeVisible();
+        }
+        System.out.println("Simulador de la Ruta de Seda ahora es visible");
+    }
+
+    /**
+     * Hace invisible la simulación gráfica de la Ruta de la Seda.
+     */
+    public void makeInvisible(){
+        for (var entry : stores.entrySet()){
+            Store store = entry.getValue();
+            if (store.base != null) {
+                store.base.makeInvisible();
+            }
+        }
+        for (var entry : robots.entrySet()){
+            Robot robot = entry.getValue();
+            robot.makeInvisible();
+        }
+        System.out.println("Simulador de la Ruta de Seda ahora es invisible");
+    }
+
+    /**
+     * Termina la simulación de la Ruta de la Seda,
+     * liberando todos los recursos (tiendas y robots).
+     */
+    public void finish(){
+        for (var entry : stores.entrySet()){
+            Store store = entry.getValue();
+            store.removeStore();
+        }
+        for (var entry : robots.entrySet()){
+            Robot robot = entry.getValue();
+            robot.removeRobot();
+        }
+        stores.clear();
+        initialStores.clear();
+        robots.clear();
+        initialRobots.clear();
+        idRobot = 0;
+        System.out.println("Simulador de la Ruta de Seda terminado - Todos los recursos liberados");
+    }
+
+    /**
+     * Verifica si el simulador está correctamente configurado.
+     * 
+     * @return true si está en un estado válido, false en caso contrario.
+     */
+    public boolean ok(){
+        try {
+            if(stores == null || robots == null || initialStores == null || initialRobots == null){
+                return false;
+            }
+            if(lenRoad <= 0){
+                return false;
+            }
+            if(posicion == null || posicion.length != lenRoad){
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
             return false;
         }
-        if(lenRoad <= 0){
-            return false;
-        }
-        if(posicion == null || posicion.length != lenRoad){
-            return false;
-        }
-        return true;
-    } catch (Exception e) {
-        return false;
     }
-}
-  
 }
