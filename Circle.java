@@ -15,14 +15,17 @@ public class Circle{
     private int xPosition;
     private int yPosition;
     private String color;
+    private Colour colour;
     private boolean isVisible;
+    private String[] colors;
 
 
     public Circle(int diameter){
         this.diameter = diameter;
         xPosition = 70;
         yPosition = 15;
-        color = "white";
+        this.colour = new Colour();
+        this.color = colour.chooseColor();
         isVisible = false;
     }
 
@@ -30,7 +33,8 @@ public class Circle{
         this.diameter = 25;
         this.xPosition = xPosition + 300;
         this.yPosition = yPosition + 300;
-        color = "red";
+        this.colour = new Colour();
+        this.color = colour.chooseColor();
         isVisible = true;
     }    
     
@@ -179,8 +183,12 @@ public class Circle{
      * "magenta" and "black".
      */
     public void changeColor(String newColor){
-        color = newColor;
+        this.color = newColor;
         draw();
+    }
+    
+    public void changeColor(){
+        this.color = colour.chooseColor();
     }
 
 
