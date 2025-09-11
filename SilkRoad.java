@@ -146,17 +146,27 @@ public class SilkRoad {
     public void moveRobot(int location, int meters){
         if (meters != 0){
             Robot robot = getFirstRobotAtLocation(location);
-            if (robot == null) return;
-
+            if (robot == null){ 
+                return;
+            }  
+                      
             robot.removeRobot();
             int newLocation = location + meters;
-            Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
-
-            robots.remove(robot.getId());
-            robots.put(robot.getId(), robotNewLocation);
-
+            int firstX = robot.getXPosition();  //
+            int firstY = robot.getYPosition(); // 
+            
+            int newX = posicion[location][0];
+            int newY = posicion[location][1];
+            
+            int distanceX = Math.abs(Math.pow(newX,2) - Math.pow(firstX,2));
+            int distanceY = Math.abs(Math.pow(newY,2) - Math.pow(firstY,2));
+            
+            robot.slowMoveX(distanceX);
+            robot.slowMoveY(distanceY);
+            robot.setLocation(newLocation);
+            
             if (stores.containsValue(getFirstStoreAtLocation(newLocation))){
-                takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
+                takeTenges(robot, getFirstStoreAtLocation(newLocation));
             }
         }
     }
