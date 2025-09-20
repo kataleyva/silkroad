@@ -26,14 +26,19 @@ public class SilkRoad {
      * @param lengthRoad Longitud de la ruta de seda.
      */
     public SilkRoad(int lengthRoad) {
-        this.lenRoad = lengthRoad;
-        this.stores = new HashMap<>();
-        this.initialStores = new HashMap<>();
-        this.robots = new HashMap<>();
-        this.initialRobots = new HashMap<>();
-        this.posicion = Posicion.generateSpiral(lenRoad);
-
-        System.out.println("Se creó la ruta de seda de longitud " + lenRoad);
+        if (lengthRoad < 0 || lengthRoad == 0){
+            System.out.println("No es posible cerar una ruta de seda de longitud " + lengthRoad);
+            this.lenRoad = 0;
+        } else {
+            this.lenRoad = lengthRoad;
+            this.stores = new HashMap<>();
+            this.initialStores = new HashMap<>();
+            this.robots = new HashMap<>();
+            this.initialRobots = new HashMap<>();
+            this.posicion = Posicion.generateSpiral(lenRoad);
+            System.out.println("Se creó la ruta de seda de longitud " + lenRoad);
+            
+        }
     }
 
     /**
@@ -43,9 +48,13 @@ public class SilkRoad {
      * @param tenges   Cantidad inicial de tenges de la tienda.
      */
     public void placeStore(int location, int tenges){
-        Store store = new Store(this.posicion[location], tenges, location);
-        stores.put(location, store);
-        initialStores.put(location, store);
+        if (stores.get(location) != null){
+            Store store = new Store(this.posicion[location], tenges, location);
+            stores.put(location, store);
+            initialStores.put(location, store);        
+        } else {
+            System.out.println("No se puede insertar una tienda sobre una ya existente.");
+        }
     }
 
     /**
@@ -67,10 +76,14 @@ public class SilkRoad {
      * @param location Posición inicial del robot.
      */
     public void placeRobot(int location) {
-        idRobot++;
-        Robot robot = new Robot(idRobot, posicion[location], location);
-        robots.put(robot.getId(), robot);
-        initialRobots.put(robot.getId(), robot);
+        if (robots.get(location) != null){
+            idRobot++;
+            Robot robot = new Robot(idRobot, posicion[location], location);
+            robots.put(robot.getId(), robot);
+            initialRobots.put(robot.getId(), robot);
+        } else {
+            System.out.println("No se puede insertar un robot sobre uno ya existente.");   
+        }
     }
 
     /**
@@ -79,16 +92,20 @@ public class SilkRoad {
      * @param location Posición del robot a eliminar.
      */
     public void removeRobot(int location) {
-        var it = robots.values().iterator();
-        while (it.hasNext()) {
-            var robot = it.next();
-            if (robot.getLoc() == location) {
-                robot.removeRobot();
-                it.remove();
+        if (robots.get(location) != null){
+            var it = robots.values().iterator();
+            while (it.hasNext()) {
+                var robot = it.next();
+                if (robot.getLoc() == location) {
+                    robot.removeRobot();
+                    it.remove();
+                }
             }
+        } else {
+            System.out.println("No hay robots en la posición indicada.");
         }
     }
-
+    
     /**
      * Obtiene el primer robot que se encuentre en una ubicación dada.
      * 
@@ -156,7 +173,11 @@ public class SilkRoad {
             robots.put(robot.getId(), robotNewLocation);
 
             if (stores.containsValue(getFirstStoreAtLocation(newLocation))){
-                takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
+                if (stores.get(newLocation).getTenge() >= 0){
+                    takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
+                } else {
+                    System.out.println("El dinero de la tienda ya fue tomado.");
+                }          
             }
         }
     }
