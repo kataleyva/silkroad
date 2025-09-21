@@ -216,6 +216,10 @@ public class SilkRoad {
         }
     }
     
+    /** 
+     * Permite consultar las ganancias que ha logrado cada robot en cada movimiento
+     */
+    
     /**
      * Reinicia la simulación de la Ruta de la Seda,
      * reabasteciendo tiendas y retornando robots a sus posiciones iniciales.
