@@ -1,16 +1,14 @@
-import javax.xml.stream.Location;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class Robot {
     private Circle robot;
     private int loc;
-    private static int id;
+    private int id;
     private int[] location;
     private int tenge;
 
     public Robot(int id, int[] location, int loc){
-        this.robot = new Circle(location[0],location[1]);
+        this.robot = new Circle(location[0], location[1]);
         this.id = id;
         this.location = location;
         this.tenge = 0;
@@ -33,7 +31,7 @@ public class Robot {
     public int getLoc(){
         return this.loc;
     }
-    
+
     public void removeRobot(){
         this.robot.makeInvisible();
     }
@@ -45,5 +43,17 @@ public class Robot {
     public void setLocation(int[] location) {
         removeRobot();
         this.location = location;
+    }
+
+    public void makeVisible() {
+        if (robot != null) {
+            robot.makeVisible();
+        }
+    }
+
+    public void makeInvisible() {
+        if (robot != null) {
+            robot.makeInvisible();
+        }
     }
 }
