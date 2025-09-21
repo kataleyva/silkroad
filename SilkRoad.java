@@ -215,8 +215,6 @@ public class SilkRoad {
            takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
        }
     }
-
-
   
     /**
      * Reabastece las tiendas que se quedaron sin tenges.
