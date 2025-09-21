@@ -224,53 +224,54 @@ public class SilkRoad {
         // Si no hay movimiento beneficioso, quedarse en la posición actual
         return new int[]{currentLocation, robot.getTenge()};
     }
-//Metodos auxiliares de move robot
-/**
- * Método auxiliar para calcular la ganancia potencial en una posición específica
- * 
- * @param location Posición a evaluar
- * @param robot Robot que está evaluando la posición
- * @return Ganancia potencial en tenges
- */
-private int calculatePotentialGain(int location, Robot robot) {
-    Store storeAtLocation = getFirstStoreAtLocation(location);
-    
-    if (storeAtLocation != null && storeAtLocation.getTenge() > 0) {
-        return storeAtLocation.getTenge();
-    }
-    
-    return 0; // No hay ganancia si no hay tienda o si la tienda está vacía
-}
-
-/**
- * Sobrecarga del método moveRobot para compatibilidad con múltiples robots
- * Mueve todos los robots de forma inteligente en una sola llamada
- * 
- * @param maxDistance Distancia máxima que pueden moverse los robots
- * @return Matriz con información de movimientos: [robotId, posiciónFinal, tengesTotales]
- */
-public int[][] moveAllRobots(int maxDistance) {
-    int[][] results = new int[robots.size()][3];
-    int index = 0;
-    // Crear una copia de las claves para evitar modificaciones concurrentes
-    Integer[] robotIds = robots.keySet().toArray(new Integer[0]);
-    for (Integer robotId : robotIds) {
-        int[] moveResult = moveRobot(robotId, maxDistance);
-        if (moveResult != null) {
-            results[index][0] = robotId;           // ID del robot
-            results[index][1] = moveResult[0];     // Posición final
-            results[index][2] = moveResult[1];     // Tenges totales
-            index++;
+    //Metodos auxiliares de move robot
+    /**
+     * Método auxiliar para calcular la ganancia potencial en una posición específica
+     * 
+     * @param location Posición a evaluar
+     * @param robot Robot que está evaluando la posición
+     * @return Ganancia potencial en tenges
+     */
+    private int calculatePotentialGain(int location, Robot robot) {
+        Store storeAtLocation = getFirstStoreAtLocation(location);
+        
+        if (storeAtLocation != null && storeAtLocation.getTenge() > 0) {
+            return storeAtLocation.getTenge();
         }
+        
+        return 0; // No hay ganancia si no hay tienda o si la tienda está vacía
     }
-    // Redimensionar el array si algunos robots no se pudieron mover
-    if (index < results.length) {
-        int[][] finalResults = new int[index][3];
-        System.arraycopy(results, 0, finalResults, 0, index);
-        return finalResults;
+
+    /**
+     * Sobrecarga del método moveRobot para compatibilidad con múltiples robots
+     * Mueve todos los robots de forma inteligente en una sola llamada
+     * 
+     * @param maxDistance Distancia máxima que pueden moverse los robots
+     * @return Matriz con información de movimientos: [robotId, posiciónFinal, tengesTotales]
+     */
+    public int[][] moveAllRobots(int maxDistance) {
+        int[][] results = new int[robots.size()][3];
+        int index = 0;
+        // Crear una copia de las claves para evitar modificaciones concurrentes
+        Integer[] robotIds = robots.keySet().toArray(new Integer[0]);
+        for (Integer robotId : robotIds) {
+            int[] moveResult = moveRobot(robotId, maxDistance);
+            if (moveResult != null) {
+                results[index][0] = robotId;           // ID del robot
+                results[index][1] = moveResult[0];     // Posición final
+                results[index][2] = moveResult[1];     // Tenges totales
+                index++;
+            }
+        }
+        // Redimensionar el array si algunos robots no se pudieron mover
+        if (index < results.length) {
+            int[][] finalResults = new int[index][3];
+            System.arraycopy(results, 0, finalResults, 0, index);
+            return finalResults;
+        }
+        return results;
     }
-    return results;
-}
+    
     /**
      * Reabastece las tiendas que se quedaron sin tenges.
      */
