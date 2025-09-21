@@ -57,7 +57,7 @@ public class SilkRoad {
     /**
      * Elimina una tienda de la ruta en una ubicación específica.
      * 
-     * @param location Posición de la tienda a eliminar.
+     * @param ocation Posición de la tienda a eliminar.
      */
     public void removeStore(int location){
         Store store = stores.get(location);
@@ -77,7 +77,6 @@ public class SilkRoad {
             idRobot++;
             Robot robot = new Robot(idRobot, posicion[location], location);
             robots.put(robot.getId(), robot);
-            initialRobots.put(robot.getId(), robot);
         } else {
             System.out.println("No se puede insertar un robot sobre uno ya existente.");   
         }
@@ -307,10 +306,12 @@ public class SilkRoad {
             Store store = entry.getValue();
             store.removeStore();
         }
+        
         for (var entry : robots.entrySet()){
             Robot robot = entry.getValue();
             robot.removeRobot();
         }
+        
         stores.clear();
         robots.clear();
         initialRobots.clear();
