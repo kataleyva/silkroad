@@ -13,7 +13,6 @@ import java.util.HashMap;
  */
 public class SilkRoad {
     private static HashMap<Integer, Store> stores;
-    private static HashMap<Integer, Store> initialStores;
     private static HashMap<Integer, Robot> robots;
     private static HashMap<Integer, Robot> initialRobots;
     private static int idRobot = 0;
@@ -32,12 +31,11 @@ public class SilkRoad {
         } else {
             this.lenRoad = lengthRoad;
             this.stores = new HashMap<>();
-            this.initialStores = new HashMap<>();
             this.robots = new HashMap<>();
             this.initialRobots = new HashMap<>();
             this.posicion = Posicion.generateSpiral(lenRoad);
             System.out.println("Se creó la ruta de seda de longitud " + lenRoad);
-            
+    
         }
     }
 
@@ -50,8 +48,7 @@ public class SilkRoad {
     public void placeStore(int location, int tenges){
         if (stores.get(location) != null){
             Store store = new Store(this.posicion[location], tenges, location);
-            stores.put(location, store);
-            initialStores.put(location, store);        
+            stores.put(location, store);   
         } else {
             System.out.println("No se puede insertar una tienda sobre una ya existente.");
         }
@@ -185,14 +182,13 @@ public class SilkRoad {
     /**
      * Reabastece las tiendas que se quedaron sin tenges.
      */
-    public void ressuplyStores(){
-        for (var i : stores.entrySet()){
-            if (i.getValue().getTenge() == 0){
-                int location = i.getKey();
-                Store initialTenge = initialStores.get(location);
-                i.setValue(initialTenge);
+    public void resupplyStores() {
+        for (Store store : stores.values()) {
+            if (store.getTenge() <= 0) {
+                store.setInitialTenge();
             }
         }
+        System.out.println("Tiendas reabastecidas correctamente");
     }
 
     /**
@@ -204,6 +200,7 @@ public class SilkRoad {
             Robot initialLocation = initialRobots.get(robotId);
             i.setValue(initialLocation);
         }
+        return;
     }
 
     /**
@@ -211,7 +208,7 @@ public class SilkRoad {
      * reabasteciendo tiendas y retornando robots a sus posiciones iniciales.
      */
     public void reboot(){
-        ressuplyStores();
+        resupplyStores();
         returnRobots();
         System.out.println("Ruta de seda reiniciada - Tiendas reabastecidas y robots reposicionados");
     }
@@ -276,6 +273,7 @@ public class SilkRoad {
                 store.base.makeVisible();
             }
         }
+        
         for (var entry : robots.entrySet()){
             Robot robot = entry.getValue();
             robot.makeVisible();
@@ -314,7 +312,6 @@ public class SilkRoad {
             robot.removeRobot();
         }
         stores.clear();
-        initialStores.clear();
         robots.clear();
         initialRobots.clear();
         idRobot = 0;
@@ -328,7 +325,7 @@ public class SilkRoad {
      */
     public boolean ok(){
         try {
-            if(stores == null || robots == null || initialStores == null || initialRobots == null){
+            if(stores == null || robots == null){
                 return false;
             }
             if(lenRoad <= 0){

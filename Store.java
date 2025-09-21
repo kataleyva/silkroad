@@ -6,7 +6,7 @@ public class Store {
     public Rectangle base;
     private int[] location;
     private int loc;
-    private int tengeInitial;
+    private static int tengeInitial;
     private int tenge;
 
     public Store(int[] location, int tenges, int loc) {
@@ -25,9 +25,19 @@ public class Store {
     public int getTenge() {
         return this.tenge;
     }
-
-    public void setTenge(int tenge) {
+    
+    public void setTenge(int tenge){
         this.tenge = tenge;
+        return;
+    }
+    
+    public int getInitialTenge(){
+        return this.tengeInitial;
+    }
+    
+    public void setInitialTenge(){
+        this.tenge = this.tengeInitial;
+        return;
     }
 
     public int getLoc(){
