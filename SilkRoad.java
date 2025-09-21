@@ -40,6 +40,7 @@ public class SilkRoad {
     
         }
     }
+    
     /**
     * Extensión para crear una ruta de seda con la entrada del problema de la maratón
     * Requisito 10: Debe permitir crear una ruta de seda con la entrada del problema de la maratón
@@ -194,32 +195,6 @@ public class SilkRoad {
     }
 
     /**
-<<<<<<< HEAD
-     * Mueve un robot desde una ubicación a otra, a través de una cantidad de metros.
-     * 
-     * @param location Ubicación actual del robot.
-     * @param meters   Cantidad de posiciones que debe avanzar.
-     */
-    public void moveRobot(int location, int meters){
-        if (meters != 0){
-            Robot robot = getFirstRobotAtLocation(location);
-            if (robot == null) return;
-
-            robot.removeRobot();
-            int newLocation = location + meters;
-            Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
-
-            robots.remove(robot.getId());
-            robots.put(robot.getId(), robotNewLocation);
-
-            if (stores.containsValue(getFirstStoreAtLocation(newLocation))){
-                if (stores.get(newLocation).getTenge() >= 0){
-                    takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
-                } else {
-                    System.out.println("El dinero de la tienda ya fue tomado.");
-                }          
-=======
-    /**
     * Extensión para mover robot de forma inteligente maximizando ganancia
     * Requisito 11: Debe permitir a los robots decidir sus movimientos buscando maximizar la ganancia
     * 
@@ -232,10 +207,12 @@ public class SilkRoad {
         if (robot == null) {
             return null; // Robot no existe
         }
+        
         int currentLocation = robot.getLoc();
         int bestMove = 0;
         int maxPotentialGain = 0;
         int bestFinalTenges = robot.getTenge();
+        
         // Evaluar todas las posibles distancias de movimiento
         for (int distance = -maxDistance; distance <= maxDistance; distance++) {
              if (distance == 0) continue; // No moverse no es una opción
@@ -260,12 +237,12 @@ public class SilkRoad {
             Robot updatedRobot = robots.get(robotId);
             if (updatedRobot != null) {
                 return new int[]{updatedRobot.getLoc(), updatedRobot.getTenge()};
->>>>>>> a99e0a1d6d4701d2503e14eeba321efedac97ad2
             }
         }
         // Si no hay movimiento beneficioso, quedarse en la posición actual
         return new int[]{currentLocation, robot.getTenge()};
     }
+
     //Metodos auxiliares de move robot
     /**
      * Método auxiliar para calcular la ganancia potencial en una posición específica
@@ -330,18 +307,18 @@ public class SilkRoad {
      * Retorna los robots a su ubicación inicial.
      */
     public void returnRobots(){
-    for (var entry : robots.entrySet()){
-        int robotId = entry.getKey();
-        Robot currentRobot = entry.getValue();
-        Robot initialRobot = initialRobots.get(robotId);
-        if (initialRobot != null) {
-            // Hacer invisible el robot actual
-            currentRobot.makeInvisible();
-            // Reemplazar con el robot inicial (posición y estado originales)
-            robots.put(robotId, new Robot(robotId, initialRobot.getLocation().clone(), initialRobot.getLoc()));
+        for (var entry : robots.entrySet()){
+            int robotId = entry.getKey();
+            Robot currentRobot = entry.getValue();
+            Robot initialRobot = initialRobots.get(robotId);
+            if (initialRobot != null) {
+                // Hacer invisible el robot actual
+                currentRobot.makeInvisible();
+                // Reemplazar con el robot inicial (posición y estado originales)
+                robots.put(robotId, new Robot(robotId, initialRobot.getLocation().clone(), initialRobot.getLoc()));
+            }
+            return;
         }
-        return;
-    }
     }
 
     /**
@@ -361,21 +338,21 @@ public class SilkRoad {
      */
     
     /**
-     * Reinicia la simulación de la Ruta de la Seda,
-     * reabasteciendo tiendas y retornando robots a sus posiciones iniciales.
-     */
-    public void reboot(){
-        resupplyStores();
-        returnRobots();
-        System.out.println("Ruta de seda reiniciada - Tiendas reabastecidas y robots reposicionados");
-    }
+        * Reinicia la simulación de la Ruta de la Seda,
+        * reabasteciendo tiendas y retornando robots a sus posiciones iniciales.
+        */
+       public void reboot(){
+            resupplyStores();
+            returnRobots();
+            System.out.println("Ruta de seda reiniciada - Tiendas reabastecidas y robots reposicionados");
+       }
 
     /**
      * Calcula la ganancia total obtenida por los robots.
      * 
      * @return Cantidad total de tenges obtenida.
      */
-    public int profit(){
+     public int profit(){
         int totalProfit = 0;
         for(Robot robot : robots.values()){
             totalProfit += robot.getTenge();
@@ -384,10 +361,10 @@ public class SilkRoad {
     }
 
     /**
-     * Devuelve información de las tiendas actuales en el simulador.
-     * 
-     * @return Matriz con ubicación y tenges de cada tienda.
-     */
+    * Devuelve información de las tiendas actuales en el simulador.
+    * 
+    * @return Matriz con ubicación y tenges de cada tienda.
+    */
     public int[][] stores(){
         int[][] storesInfo = new int[stores.size()][2];
         int index = 0;
@@ -402,10 +379,10 @@ public class SilkRoad {
     }
 
     /**
-     * Devuelve información de los robots actuales en el simulador.
-     * 
-     * @return Matriz con id, ubicación y tenges de cada robot.
-     */
+    * Devuelve información de los robots actuales en el simulador.
+    * 
+    * @return Matriz con id, ubicación y tenges de cada robot.
+    */
     public int[][] robots(){
         int[][] robotsInfo = new int[robots.size()][3];
         int index = 0;
@@ -418,11 +395,11 @@ public class SilkRoad {
             index++;
         }
         return robotsInfo;
-    }
-
+     }
+    
     /**
-     * Hace visible la simulación gráfica de la Ruta de la Seda.
-     */
+    * Hace visible la simulación gráfica de la Ruta de la Seda.
+    */
     public void makeVisible(){
         for (var entry : stores.entrySet()){
             Store store = entry.getValue();
@@ -439,8 +416,8 @@ public class SilkRoad {
     }
 
     /**
-     * Hace invisible la simulación gráfica de la Ruta de la Seda.
-     */
+    * Hace invisible la simulación gráfica de la Ruta de la Seda.
+    */
     public void makeInvisible(){
         for (var entry : stores.entrySet()){
             Store store = entry.getValue();
@@ -456,9 +433,9 @@ public class SilkRoad {
     }
 
     /**
-     * Termina la simulación de la Ruta de la Seda,
-     * liberando todos los recursos (tiendas y robots).
-     */
+    * Termina la simulación de la Ruta de la Seda,
+    * liberando todos los recursos (tiendas y robots).
+    */
     public void finish(){
         for (var entry : stores.entrySet()){
             Store store = entry.getValue();
@@ -478,10 +455,10 @@ public class SilkRoad {
     }
 
     /**
-     * Verifica si el simulador está correctamente configurado.
-     * 
-     * @return true si está en un estado válido, false en caso contrario.
-     */
+    * Verifica si el simulador está correctamente configurado.
+    * 
+    * @return true si está en un estado válido, false en caso contrario.
+    */
     public boolean ok(){
         try {
             if(stores == null || robots == null){
