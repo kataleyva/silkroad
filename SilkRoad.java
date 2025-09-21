@@ -219,6 +219,7 @@ public class SilkRoad {
                     System.out.println("El dinero de la tienda ya fue tomado.");
                 }          
 =======
+    /**
     * Extensión para mover robot de forma inteligente maximizando ganancia
     * Requisito 11: Debe permitir a los robots decidir sus movimientos buscando maximizar la ganancia
     * 
