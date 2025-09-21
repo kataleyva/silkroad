@@ -193,104 +193,46 @@ public class SilkRoad {
         store.setTenge(newTenges);
         return newRobotTenges;
     }
-
     /**
-    * Extensión para mover robot de forma inteligente maximizando ganancia
-    * Requisito 11: Debe permitir a los robots decidir sus movimientos buscando maximizar la ganancia
-    * 
-    * @param robotId ID del robot a mover
-    * @param maxDistance Distancia máxima que puede moverse el robot
-    * @return Array con [posiciónFinal, tengesTotalesObtenidos] o null si no se puede mover
+    * Método moveRobot mejorado con Requisito 11: decisión inteligente para maximizar ganancia
+    * @param location Posición actual del robot
+    * @param meters Distancia máxima (el robot decide la distancia óptima dentro de este rango)
     */
-    public int[] moveRobot(int robotId, int maxDistance) {
-        Robot robot = robots.get(robotId);
-        if (robot == null) {
-            return null; // Robot no existe
-        }
-        
-        int currentLocation = robot.getLoc();
+    public void moveRobot(int location, int meters) {
+        if (meters == 0) return;
+        Robot robot = getFirstRobotAtLocation(location);
+        if (robot == null) return;
+        // REQUISITO 11: Robot decide el mejor movimiento
         int bestMove = 0;
-        int maxPotentialGain = 0;
-        int bestFinalTenges = robot.getTenge();
+        int maxGain = 0;
+        // Evaluar todas las opciones posibles
+        for (int distance = -Math.abs(meters); distance <= Math.abs(meters); distance++) {
+            if (distance == 0) continue;
         
-        // Evaluar todas las posibles distancias de movimiento
-        for (int distance = -maxDistance; distance <= maxDistance; distance++) {
-             if (distance == 0) continue; // No moverse no es una opción
-             int targetLocation = currentLocation + distance;
-             // Verificar que la nueva posición esté dentro del rango válido
-             if (targetLocation < 0 || targetLocation >= lenRoad) {
-                 continue;
-             }
-             // Calcular ganancia potencial en esa posición
-             int potentialGain = calculatePotentialGain(targetLocation, robot);
-             // Si esta posición ofrece mejor ganancia, actualizarla como mejor opción
-             if (potentialGain > maxPotentialGain) {
-                 maxPotentialGain = potentialGain;
-                 bestMove = distance;
-                 bestFinalTenges = robot.getTenge() + potentialGain;
-             }
-        }
-        // Si encontramos un movimiento beneficioso, ejecutarlo
-        if (bestMove != 0) {
-            moveRobot(currentLocation, bestMove);
-            // Obtener la nueva información del robot después del movimiento
-            Robot updatedRobot = robots.get(robotId);
-            if (updatedRobot != null) {
-                return new int[]{updatedRobot.getLoc(), updatedRobot.getTenge()};
+            int targetLocation = location + distance;
+            if (targetLocation >= 0 && targetLocation < lenRoad) {
+                Store store = getFirstStoreAtLocation(targetLocation);
+                int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
+                
+                if (gain > maxGain) {
+                    maxGain = gain;
+                    bestMove = distance;
             }
         }
-        // Si no hay movimiento beneficioso, quedarse en la posición actual
-        return new int[]{currentLocation, robot.getTenge()};
+    }
+    // Si no hay ganancia, no se mueve
+    if (bestMove == 0) return;
+    // Ejecutar el mejor movimiento (código original)
+    robot.removeRobot();
+    int newLocation = location + bestMove;
+    Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
+    robots.remove(robot.getId());
+    robots.put(robot.getId(), robotNewLocation);
+    if (stores.containsValue(getFirstStoreAtLocation(newLocation))) {
+        takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
+    }
     }
 
-    //Metodos auxiliares de move robot
-    /**
-     * Método auxiliar para calcular la ganancia potencial en una posición específica
-     * 
-     * @param location Posición a evaluar
-     * @param robot Robot que está evaluando la posición
-     * @return Ganancia potencial en tenges
-     */
-    private int calculatePotentialGain(int location, Robot robot) {
-        Store storeAtLocation = getFirstStoreAtLocation(location);
-        
-        if (storeAtLocation != null && storeAtLocation.getTenge() > 0) {
-            return storeAtLocation.getTenge();
-        }
-        
-        return 0; // No hay ganancia si no hay tienda o si la tienda está vacía
-    }
-
-    /**
-     * Sobrecarga del método moveRobot para compatibilidad con múltiples robots
-     * Mueve todos los robots de forma inteligente en una sola llamada
-     * 
-     * @param maxDistance Distancia máxima que pueden moverse los robots
-     * @return Matriz con información de movimientos: [robotId, posiciónFinal, tengesTotales]
-     */
-    public int[][] moveAllRobots(int maxDistance) {
-        int[][] results = new int[robots.size()][3];
-        int index = 0;
-        // Crear una copia de las claves para evitar modificaciones concurrentes
-        Integer[] robotIds = robots.keySet().toArray(new Integer[0]);
-        for (Integer robotId : robotIds) {
-            int[] moveResult = moveRobot(robotId, maxDistance);
-            if (moveResult != null) {
-                results[index][0] = robotId;           // ID del robot
-                results[index][1] = moveResult[0];     // Posición final
-                results[index][2] = moveResult[1];     // Tenges totales
-                index++;
-            }
-        }
-        // Redimensionar el array si algunos robots no se pudieron mover
-        if (index < results.length) {
-            int[][] finalResults = new int[index][3];
-            System.arraycopy(results, 0, finalResults, 0, index);
-            return finalResults;
-        }
-        return results;
-    }
-    
     /**
      * Reabastece las tiendas que se quedaron sin tenges.
      */
@@ -301,6 +243,8 @@ public class SilkRoad {
             }
         }
         System.out.println("Tiendas reabastecidas correctamente");
+
+        updateStoresVisualState();
     }
     
     /**
@@ -412,6 +356,7 @@ public class SilkRoad {
             Robot robot = entry.getValue();
             robot.makeVisible();
         }
+        updateStoresVisualState();
         System.out.println("Simulador de la Ruta de Seda ahora es visible");
     }
 
@@ -475,4 +420,24 @@ public class SilkRoad {
             return false;
         }
     }
+    //Requisito de Usabilidad-Las tiendas desocupadas deben lucir diferentes
+    /**
+    * Actualiza la apariencia visual de todas las tiendas según su estado
+    * Las tiendas desocupadas (tenge = 0) lucen diferentes a las ocupadas
+    */
+    public void updateStoresVisualState() {
+        for (var entry : stores.entrySet()) {
+            Store store = entry.getValue();
+            if (store != null && store.base != null) {
+                if (store.getTenge() <= 0) {
+                   // Tienda desocupada seran de color gris
+                   store.base.changeColor("gray");
+                } else {
+                    // Tienda con tenges seran de color azul
+                    store.base.changeColor("blue");
+                }
+            }
+        }
+    }
+
 }
