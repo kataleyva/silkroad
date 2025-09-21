@@ -35,6 +35,47 @@ public class SilkRoad {
 
         System.out.println("Se creó la ruta de seda de longitud " + lenRoad);
     }
+    /**
+    * Extensión para crear una ruta de seda con la entrada del problema de la maratón
+    * Requisito 10: Debe permitir crear una ruta de seda con la entrada del problema de la maratón
+    * 
+    * @param input Array de enteros que representa la entrada del problema de la maratón
+    *              Formato: [n, s1, t1, s2, t2, ..., sn, tn, r1, r2, ..., rk]
+    *              donde n es el número de tiendas, si y ti son posición y tenges de cada tienda,
+    *              y ri son las posiciones iniciales de los robots
+    */
+
+    public void create(int[] input) {
+        if (input == null || input.length < 1) {
+            throw new IllegalArgumentException("Input no puede ser null o vacío");
+        }
+        int n = input[0]; // número de tiendas
+        if (input.length < 1 + 2*n) {
+            throw new IllegalArgumentException("Input insuficiente para el número de tiendas especificado");
+        }
+        // Crear las tiendas según la entrada
+        for (int i = 0; i < n; i++) {
+            int storePosition = input[1 + 2*i];     // posición de la tienda
+            int storeTenges = input[1 + 2*i + 1];   // tenges iniciales de la tienda
+            // Validar que la posición esté dentro del rango válido
+            if (storePosition < 0 || storePosition >= lenRoad) {
+                throw new IllegalArgumentException("Posición de tienda fuera del rango válido: " + storePosition);
+            }
+            placeStore(storePosition, storeTenges);
+        }
+        // Crear los robots con las posiciones restantes del input
+        int robotStartIndex = 1 + 2*n;
+        for (int i = robotStartIndex; i < input.length; i++) {
+             int robotPosition = input[i];
+             // Validar que la posición esté dentro del rango válido
+             if (robotPosition < 0 || robotPosition >= lenRoad) {
+                 throw new IllegalArgumentException("Posición de robot fuera del rango válido: " + robotPosition);
+                }
+             placeRobot(robotPosition);
+        }
+        System.out.println("Ruta de seda creada con " + n + " tiendas y " + 
+                           (input.length - robotStartIndex) + " robots");
+    }
 
     /**
      * Coloca una tienda en la ruta en una ubicación específica.
@@ -138,29 +179,98 @@ public class SilkRoad {
     }
 
     /**
-     * Mueve un robot desde una ubicación a otra, a través de una cantidad de metros.
-     * 
-     * @param location Ubicación actual del robot.
-     * @param meters   Cantidad de posiciones que debe avanzar.
-     */
-    public void moveRobot(int location, int meters){
-        if (meters != 0){
-            Robot robot = getFirstRobotAtLocation(location);
-            if (robot == null) return;
-
-            robot.removeRobot();
-            int newLocation = location + meters;
-            Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
-
-            robots.remove(robot.getId());
-            robots.put(robot.getId(), robotNewLocation);
-
-            if (stores.containsValue(getFirstStoreAtLocation(newLocation))){
-                takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
+    * Extensión para mover robot de forma inteligente maximizando ganancia
+    * Requisito 11: Debe permitir a los robots decidir sus movimientos buscando maximizar la ganancia
+    * 
+    * @param robotId ID del robot a mover
+    * @param maxDistance Distancia máxima que puede moverse el robot
+    * @return Array con [posiciónFinal, tengesTotalesObtenidos] o null si no se puede mover
+    */
+    public int[] moveRobot(int robotId, int maxDistance) {
+        Robot robot = robots.get(robotId);
+        if (robot == null) {
+            return null; // Robot no existe
+        }
+        int currentLocation = robot.getLoc();
+        int bestMove = 0;
+        int maxPotentialGain = 0;
+        int bestFinalTenges = robot.getTenge();
+        // Evaluar todas las posibles distancias de movimiento
+        for (int distance = -maxDistance; distance <= maxDistance; distance++) {
+             if (distance == 0) continue; // No moverse no es una opción
+             int targetLocation = currentLocation + distance;
+             // Verificar que la nueva posición esté dentro del rango válido
+             if (targetLocation < 0 || targetLocation >= lenRoad) {
+                 continue;
+             }
+             // Calcular ganancia potencial en esa posición
+             int potentialGain = calculatePotentialGain(targetLocation, robot);
+             // Si esta posición ofrece mejor ganancia, actualizarla como mejor opción
+             if (potentialGain > maxPotentialGain) {
+                 maxPotentialGain = potentialGain;
+                 bestMove = distance;
+                 bestFinalTenges = robot.getTenge() + potentialGain;
+             }
+        }
+        // Si encontramos un movimiento beneficioso, ejecutarlo
+        if (bestMove != 0) {
+            moveRobot(currentLocation, bestMove);
+            // Obtener la nueva información del robot después del movimiento
+            Robot updatedRobot = robots.get(robotId);
+            if (updatedRobot != null) {
+                return new int[]{updatedRobot.getLoc(), updatedRobot.getTenge()};
             }
         }
+        // Si no hay movimiento beneficioso, quedarse en la posición actual
+        return new int[]{currentLocation, robot.getTenge()};
     }
+//Metodos auxiliares de move robot
+/**
+ * Método auxiliar para calcular la ganancia potencial en una posición específica
+ * 
+ * @param location Posición a evaluar
+ * @param robot Robot que está evaluando la posición
+ * @return Ganancia potencial en tenges
+ */
+private int calculatePotentialGain(int location, Robot robot) {
+    Store storeAtLocation = getFirstStoreAtLocation(location);
+    
+    if (storeAtLocation != null && storeAtLocation.getTenge() > 0) {
+        return storeAtLocation.getTenge();
+    }
+    
+    return 0; // No hay ganancia si no hay tienda o si la tienda está vacía
+}
 
+/**
+ * Sobrecarga del método moveRobot para compatibilidad con múltiples robots
+ * Mueve todos los robots de forma inteligente en una sola llamada
+ * 
+ * @param maxDistance Distancia máxima que pueden moverse los robots
+ * @return Matriz con información de movimientos: [robotId, posiciónFinal, tengesTotales]
+ */
+public int[][] moveAllRobots(int maxDistance) {
+    int[][] results = new int[robots.size()][3];
+    int index = 0;
+    // Crear una copia de las claves para evitar modificaciones concurrentes
+    Integer[] robotIds = robots.keySet().toArray(new Integer[0]);
+    for (Integer robotId : robotIds) {
+        int[] moveResult = moveRobot(robotId, maxDistance);
+        if (moveResult != null) {
+            results[index][0] = robotId;           // ID del robot
+            results[index][1] = moveResult[0];     // Posición final
+            results[index][2] = moveResult[1];     // Tenges totales
+            index++;
+        }
+    }
+    // Redimensionar el array si algunos robots no se pudieron mover
+    if (index < results.length) {
+        int[][] finalResults = new int[index][3];
+        System.arraycopy(results, 0, finalResults, 0, index);
+        return finalResults;
+    }
+    return results;
+}
     /**
      * Reabastece las tiendas que se quedaron sin tenges.
      */
@@ -173,16 +283,22 @@ public class SilkRoad {
             }
         }
     }
-
+    
     /**
      * Retorna los robots a su ubicación inicial.
      */
     public void returnRobots(){
-        for (var i : robots.entrySet()){
-            int robotId = i.getKey();
-            Robot initialLocation = initialRobots.get(robotId);
-            i.setValue(initialLocation);
+    for (var entry : robots.entrySet()){
+        int robotId = entry.getKey();
+        Robot currentRobot = entry.getValue();
+        Robot initialRobot = initialRobots.get(robotId);
+        if (initialRobot != null) {
+            // Hacer invisible el robot actual
+            currentRobot.makeInvisible();
+            // Reemplazar con el robot inicial (posición y estado originales)
+            robots.put(robotId, new Robot(robotId, initialRobot.getLocation().clone(), initialRobot.getLoc()));
         }
+    }
     }
 
     /**
