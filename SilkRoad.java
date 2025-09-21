@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Clase que representa el simulador de la Ruta de la Seda.
@@ -18,6 +19,7 @@ public class SilkRoad {
     private static int idRobot = 0;
     private final int lenRoad;
     private int[][] posicion;
+    private ArrayList<Integer> StoresEmptiedByLocation;
 
     /**
      * Constructor de la clase SilkRoad.
@@ -202,6 +204,18 @@ public class SilkRoad {
         return;
     }
 
+    /**
+     * Retorna la cantidad de veces que una tienda ha sido desocupado por su ubicación.
+     */
+    public void getTimesStoresEmptied(){
+        for (Store store : stores.values()){
+            int totalEmptiedTimes  = store.getTimesEmpty();
+            StoresEmptiedByLocation.add(totalEmptiedTimes);
+            int location = store.getLoc();
+            System.out.println("La tienda de la ubicación: " + location + " ha sido desocupada " + totalEmptiedTimes + " veces.");
+        }
+    }
+    
     /**
      * Reinicia la simulación de la Ruta de la Seda,
      * reabasteciendo tiendas y retornando robots a sus posiciones iniciales.

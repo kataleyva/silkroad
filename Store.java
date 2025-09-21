@@ -6,8 +6,9 @@ public class Store {
     public Rectangle base;
     private int[] location;
     private int loc;
-    private static int tengeInitial;
+    private int tengeInitial;
     private int tenge;
+    private static int timesEmpty = 0;
 
     public Store(int[] location, int tenges, int loc) {
        this.base = new Rectangle(location[0], location[1]);
@@ -28,7 +29,14 @@ public class Store {
     
     public void setTenge(int tenge){
         this.tenge = tenge;
+        if (tenge == 0){
+            this.timesEmpty ++;
+        }
         return;
+    }
+    
+    public int getTimesEmpty(){
+        return this.timesEmpty;
     }
     
     public int getInitialTenge(){
