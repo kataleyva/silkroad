@@ -18,6 +18,7 @@ public class Rectangle{
     private int xPosition;
     private int yPosition;
     private String color;
+    private Colour colour;
     private boolean isVisible;
 
     /**
@@ -28,7 +29,8 @@ public class Rectangle{
         width = 30;
         xPosition = 70;
         yPosition = 15;
-        color = "magenta";
+        this.colour = new Colour();
+        this.color = colour.chooseColor();
         isVisible = false;
     }
 
@@ -37,7 +39,8 @@ public class Rectangle{
         width = 30;
         this.xPosition = xPosition + 300;
         this.yPosition = yPosition + 300;
-        color = "black";
+        this.colour = new Colour();
+        this.color = colour.chooseColor();
         isVisible = true;
     }    
 
@@ -163,8 +166,12 @@ public class Rectangle{
      * "magenta" and "black".
      */
     public void changeColor(String newColor){
-        color = newColor;
+        this.color = newColor;
         draw();
+    }
+    
+    public void changeColor(){
+        this.color = colour.chooseColor();
     }
 
     /*
