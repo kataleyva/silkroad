@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Clase que representa el simulador de la Ruta de la Seda.
@@ -193,7 +194,31 @@ public class SilkRoad {
         store.setTenge(newTenges);
         return newRobotTenges;
     }
+    
+    /**
+     * Mueve un robot desde una ubicación a otra, a través de una cantidad de metros.
+     * 
+     * @param location Ubicación actual del robot.
+     * @param meters   Cantidad de posiciones que debe avanzar.
+     */
+    public void moveRobot(int location, int meters){
+        if (meters != 0){
+            Robot robot = getFirstRobotAtLocation(location);
+            if (robot == null) return;
 
+            robot.removeRobot();
+            int newLocation = location + meters;
+            Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
+
+            robots.remove(robot.getId());
+            robots.put(robot.getId(), robotNewLocation);
+
+            if (stores.containsValue(getFirstStoreAtLocation(newLocation))){
+                takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
+            }
+        }
+    }
+    
     /**
     * Extensión para mover robot de forma inteligente maximizando ganancia
     * Requisito 11: Debe permitir a los robots decidir sus movimientos buscando maximizar la ganancia
@@ -336,6 +361,43 @@ public class SilkRoad {
     /** 
      * Permite consultar las ganancias que ha logrado cada robot en cada movimiento
      */
+    
+    
+    /**
+     * Permite identificar el robot con mayor ganancias
+     */
+    public void getRobotHighestProfits(){
+        ArrayList<Integer> profits;
+        ArrayList<Robot> robs;
+        for (Robot rb:robots.values()){
+            int profit = rb.getTenge();
+            profits.add(profit);
+            robs.add(rb);
+        }
+        int maxProfit = Collections.max(profits);
+        
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < profits.size(); i++) {
+            if (profits.get(i) == maxProfit) {
+                indices.add(i);
+            }
+        }
+        
+        if (indices.size() > 1){
+            System.out.println("Hay un empate entre los robots");
+            for (int i : indices){
+                Robot rb = robs.get(i);
+                System.out.println("Robot en la ubicación: " + rb.getLoc());        
+            }
+        } else if (indices.size() <= 0){
+            System.out.println("No hay robots registrados");
+        } else {
+            robs.get(profits.get(0)).makeInvisible();
+            robs.get(profits.get(0)).makeVisible();
+            robs.get(profits.get(0)).makeInvisible();
+            robs.get(profits.get(0)).makeVisible();
+        }  
+    }
     
     /**
         * Reinicia la simulación de la Ruta de la Seda,
