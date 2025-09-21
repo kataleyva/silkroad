@@ -32,6 +32,7 @@ public class Store {
         if (tenge == 0){
             this.timesEmpty ++;
         }
+        System.out.println(timesEmpty);
         return;
     }
     
