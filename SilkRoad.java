@@ -93,8 +93,6 @@ public class SilkRoad {
     public void placeStore(int location, int tenges){
         if (stores.get(location) != null){
             System.out.println("No se puede insertar una tienda sobre una ya existente.");
-            Store store = new Store(this.posicion[location], tenges, location);
-            stores.put(location, store);   
         } else {
             Store store = new Store(this.posicion[location], tenges, location);
             stores.put(location, store);   
@@ -201,34 +199,28 @@ public class SilkRoad {
     * @param location Posición actual del robot
     * @param meters Distancia máxima (el robot decide la distancia óptima dentro de este rango)
     */
-    
-    /**
-    * Método moveRobot mejorado con Requisito 11: decisión inteligente para maximizar ganancia
-    * @param location Posición actual del robot
-    * @param meters Distancia máxima (el robot decide la distancia óptima dentro de este rango)
-    */
-    public void moveRobot(int location, int meters) {
-        if (meters == 0) return;
-        Robot robot = getFirstRobotAtLocation(location);
-        if (robot == null) return;
-        // REQUISITO 11: Robot decide el mejor movimiento
-        int bestMove = 0;
-        int maxGain = 0;
-        // Evaluar todas las opciones posibles
-        for (int distance = -Math.abs(meters); distance <= Math.abs(meters); distance++) {
-            if (distance == 0) continue;
-        
-            int targetLocation = location + distance;
-            if (targetLocation >= 0 && targetLocation < lenRoad) {
-                Store store = getFirstStoreAtLocation(targetLocation);
-                int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
-                
-                if (gain > maxGain) {
-                    maxGain = gain;
-                    bestMove = distance;
+        public void moveRobot(int location, int meters) {
+            if (meters == 0) return;
+            Robot robot = getFirstRobotAtLocation(location);
+            if (robot == null) return;
+            // REQUISITO 11: Robot decide el mejor movimiento
+            int bestMove = 0;
+            int maxGain = 0;
+            // Evaluar todas las opciones posibles
+            for (int distance = -Math.abs(meters); distance <= Math.abs(meters); distance++) {
+                if (distance == 0) continue;
+            
+                int targetLocation = location + distance;
+                if (targetLocation >= 0 && targetLocation < lenRoad) {
+                    Store store = getFirstStoreAtLocation(targetLocation);
+                    int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
+                    
+                    if (gain > maxGain) {
+                        maxGain = gain;
+                        bestMove = distance;
+                    }
                 }
-            }
-        }
+            }   
         // Si no hay ganancia, no se mueve
         if (bestMove == 0) return;
         // Ejecutar el mejor movimiento (código original)
@@ -245,7 +237,7 @@ public class SilkRoad {
     /**
      * Reabastece las tiendas que se quedaron sin tenges.
      */
-        public void resupplyStores() {
+    public void resupplyStores() {
         for (Store store : stores.values()) {
             if (store.getTenge() <= 0) {
                 store.setInitialTenge();
