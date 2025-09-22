@@ -8,7 +8,7 @@ public class Store {
     private int loc;
     private int tengeInitial;
     private int tenge;
-    private static int timesEmpty = 0;
+    private int timesEmpty = 0;
 
     public Store(int[] location, int tenges, int loc) {
        this.base = new Rectangle(location[0], location[1]);
@@ -32,6 +32,7 @@ public class Store {
         if (tenge == 0){
             this.timesEmpty ++;
         }
+        System.out.println(timesEmpty);
         return;
     }
     

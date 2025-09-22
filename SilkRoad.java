@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Clase que representa el simulador de la Ruta de la Seda.
@@ -90,11 +91,11 @@ public class SilkRoad {
      * @param tenges   Cantidad inicial de tenges de la tienda.
      */
     public void placeStore(int location, int tenges){
-        if (stores.get(location) == null){
+        if (stores.get(location) != null){
+            System.out.println("No se puede insertar una tienda sobre una ya existente.");
+        } else {
             Store store = new Store(this.posicion[location], tenges, location);
             stores.put(location, store);   
-        } else {
-            System.out.println("No se puede insertar una tienda sobre una ya existente.");
         }
     }
 
@@ -117,12 +118,12 @@ public class SilkRoad {
      * @param location Posición inicial del robot.
      */
     public void placeRobot(int location) {
-        if (robots.get(location) == null){
+        if (robots.get(location) != null){
+            System.out.println("No se puede insertar un robot sobre uno ya existente.");
+        } else {
             idRobot++;
             Robot robot = new Robot(idRobot, posicion[location], location);
             robots.put(robot.getId(), robot);
-        } else {
-            System.out.println("No se puede insertar un robot sobre uno ya existente.");   
         }
     }
 
@@ -193,44 +194,46 @@ public class SilkRoad {
         store.setTenge(newTenges);
         return newRobotTenges;
     }
+    
     /**
     * Método moveRobot mejorado con Requisito 11: decisión inteligente para maximizar ganancia
     * @param location Posición actual del robot
     * @param meters Distancia máxima (el robot decide la distancia óptima dentro de este rango)
     */
-    public void moveRobot(int location, int meters) {
-        if (meters == 0) return;
-        Robot robot = getFirstRobotAtLocation(location);
-        if (robot == null) return;
-        // REQUISITO 11: Robot decide el mejor movimiento
-        int bestMove = 0;
-        int maxGain = 0;
-        // Evaluar todas las opciones posibles
-        for (int distance = -Math.abs(meters); distance <= Math.abs(meters); distance++) {
-            if (distance == 0) continue;
-        
-            int targetLocation = location + distance;
-            if (targetLocation >= 0 && targetLocation < lenRoad) {
-                Store store = getFirstStoreAtLocation(targetLocation);
-                int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
-                
-                if (gain > maxGain) {
-                    maxGain = gain;
-                    bestMove = distance;
-            }
+        public void moveRobot(int location, int meters) {
+            if (meters == 0) return;
+            Robot robot = getFirstRobotAtLocation(location);
+            if (robot == null) return;
+            // REQUISITO 11: Robot decide el mejor movimiento
+            int bestMove = 0;
+            int maxGain = 0;
+            // Evaluar todas las opciones posibles
+            for (int distance = -Math.abs(meters); distance <= Math.abs(meters); distance++) {
+                if (distance == 0) continue;
+            
+                int targetLocation = location + distance;
+                if (targetLocation >= 0 && targetLocation < lenRoad) {
+                    Store store = getFirstStoreAtLocation(targetLocation);
+                    int gain = (store != null && store.getTenge() > 0) ? store.getTenge() : 0;
+                    
+                    if (gain > maxGain) {
+                        maxGain = gain;
+                        bestMove = distance;
+                    }
+                }
+            }   
+        // Si no hay ganancia, no se mueve
+        if (bestMove == 0) return;
+        // Ejecutar el mejor movimiento (código original)
+        robot.removeRobot();
+        int newLocation = location + bestMove;
+        Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
+        robots.remove(robot.getId());
+        robots.put(robot.getId(), robotNewLocation);
+        if (stores.containsValue(getFirstStoreAtLocation(newLocation))) {
+            takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
+            
         }
-    }
-    // Si no hay ganancia, no se mueve
-    if (bestMove == 0) return;
-    // Ejecutar el mejor movimiento (código original)
-    robot.removeRobot();
-    int newLocation = location + bestMove;
-    Robot robotNewLocation = new Robot(robot.getId(), posicion[newLocation], newLocation);
-    robots.remove(robot.getId());
-    robots.put(robot.getId(), robotNewLocation);
-    if (stores.containsValue(getFirstStoreAtLocation(newLocation))) {
-        takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
-    }
     }
 
     /**
@@ -243,8 +246,6 @@ public class SilkRoad {
             }
         }
         System.out.println("Tiendas reabastecidas correctamente");
-
-        updateStoresVisualState();
     }
     
     /**
@@ -279,6 +280,42 @@ public class SilkRoad {
     /** 
      * Permite consultar las ganancias que ha logrado cada robot en cada movimiento
      */
+     
+    /**
+     * Permite identificar el robot con mayor ganancias
+     */
+    public void getRobotHighestProfits(){
+        ArrayList<Integer> profits = new ArrayList<>();
+        ArrayList<Robot> robs = new ArrayList<>();
+        for (Robot rb:robots.values()){
+            int profit = rb.getTenge();
+            profits.add(profit);
+            robs.add(rb);
+        }
+        int maxProfit = Collections.max(profits);
+        
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < profits.size(); i++) {
+            if (profits.get(i) == maxProfit) {
+                indices.add(i);
+            }
+        }
+        
+        if (indices.size() > 1){
+            System.out.println("Hay un empate entre los robots");
+            for (int i : indices){
+                Robot rb = robs.get(i);
+                System.out.println("Robot en la ubicación: " + rb.getLoc());        
+            }
+        } else if (indices.size() <= 0){
+            System.out.println("No hay robots registrados");
+        } else {
+            robs.get(profits.get(0)).makeInvisible();
+            robs.get(profits.get(0)).makeVisible();
+            robs.get(profits.get(0)).makeInvisible();
+            robs.get(profits.get(0)).makeVisible();
+        }  
+    }
     
     /**
         * Reinicia la simulación de la Ruta de la Seda,
