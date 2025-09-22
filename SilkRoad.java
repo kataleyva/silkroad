@@ -90,7 +90,7 @@ public class SilkRoad {
      * @param tenges   Cantidad inicial de tenges de la tienda.
      */
     public void placeStore(int location, int tenges){
-        if (stores.get(location) != null){
+        if (stores.get(location) == null){
             Store store = new Store(this.posicion[location], tenges, location);
             stores.put(location, store);   
         } else {
@@ -117,7 +117,7 @@ public class SilkRoad {
      * @param location Posición inicial del robot.
      */
     public void placeRobot(int location) {
-        if (robots.get(location) != null){
+        if (robots.get(location) == null){
             idRobot++;
             Robot robot = new Robot(idRobot, posicion[location], location);
             robots.put(robot.getId(), robot);
@@ -271,7 +271,6 @@ public class SilkRoad {
     public void getTimesStoresEmptied(){
         for (Store store : stores.values()){
             int totalEmptiedTimes  = store.getTimesEmpty();
-            StoresEmptiedByLocation.add(totalEmptiedTimes);
             int location = store.getLoc();
             System.out.println("La tienda de la ubicación: " + location + " ha sido desocupada " + totalEmptiedTimes + " veces.");
         }
