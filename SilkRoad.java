@@ -124,6 +124,11 @@ public class SilkRoad {
             idRobot++;
             Robot robot = new Robot(idRobot, posicion[location], location);
             robots.put(robot.getId(), robot);
+        
+            Robot initialRobot = new Robot(idRobot, posicion[location].clone(), location);
+            initialRobot.makeInvisible();
+            initialRobots.put(robot.getId(), initialRobot);
+            System.out.println("Robot " + idRobot + " colocado en posición " + location);
         }
     }
 
@@ -247,24 +252,33 @@ public class SilkRoad {
         }
         System.out.println("Tiendas reabastecidas correctamente");
     }
-    
+
     /**
-     * Retorna los robots a su ubicación inicial.
-     */
+    * Retorna los robots a su posicion inicial
+    */
     public void returnRobots(){
+        System.out.println("Robots iniciales disponibles: " + initialRobots.size());
+        System.out.println("Robots actuales: " + robots.size());
+        if (initialRobots.isEmpty()) {
+            return;
+        }
         for (var entry : robots.entrySet()){
             int robotId = entry.getKey();
             Robot currentRobot = entry.getValue();
             Robot initialRobot = initialRobots.get(robotId);
             if (initialRobot != null) {
-                // Hacer invisible el robot actual
-                currentRobot.makeInvisible();
-                // Reemplazar con el robot inicial (posición y estado originales)
-                robots.put(robotId, new Robot(robotId, initialRobot.getLocation().clone(), initialRobot.getLoc()));
+                System.out.println("Robot " + robotId + " - Posición actual: " + currentRobot.getLoc() + 
+                             ", Posición inicial: " + initialRobot.getLoc());
+                currentRobot.removeRobot();
+                Robot resetRobot = new Robot(robotId, posicion[initialRobot.getLoc()], initialRobot.getLoc());
+                robots.put(robotId, resetRobot);
+                System.out.println("Robot " + robotId + " movido a posición inicial: " + resetRobot.getLoc());
+            } else {
+            System.out.println("No se encontro robot inicial para ID: " + robotId);
             }
-            return;
         }
     }
+
 
     /**
      * Retorna la cantidad de veces que una tienda ha sido desocupado por su ubicación.
