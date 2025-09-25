@@ -194,6 +194,7 @@ public class SilkRoad {
         store.setTenge(newTenges);
         return newRobotTenges;
     }
+    
     /**
     * Método moveRobot mejorado con Requisito 11: decisión inteligente para maximizar ganancia
     * @param location Posición actual del robot
@@ -231,9 +232,12 @@ public class SilkRoad {
         robots.put(robot.getId(), robotNewLocation);
         if (stores.containsValue(getFirstStoreAtLocation(newLocation))) {
             takeTenges(robotNewLocation, getFirstStoreAtLocation(newLocation));
+            
         }
+        
+        showRobotProfits(robot);
     }
-
+    
     /**
      * Reabastece las tiendas que se quedaron sin tenges.
      */
@@ -263,6 +267,13 @@ public class SilkRoad {
             return;
         }
     }
+    
+    /** 
+     * Permite consultar las ganancias que ha logrado cada robot en cada movimiento
+     */
+    private void showRobotProfits(Robot r){
+        System.out.println("El robot ha recolectado hasta este punto: " + r.getTenge());
+    }
 
     /**
      * Retorna la cantidad de veces que una tienda ha sido desocupado por su ubicación.
@@ -274,10 +285,6 @@ public class SilkRoad {
             System.out.println("La tienda de la ubicación: " + location + " ha sido desocupada " + totalEmptiedTimes + " veces.");
         }
     }
-    
-    /** 
-     * Permite consultar las ganancias que ha logrado cada robot en cada movimiento
-     */
      
     /**
      * Permite identificar el robot con mayor ganancias
@@ -316,14 +323,14 @@ public class SilkRoad {
     }
     
     /**
-        * Reinicia la simulación de la Ruta de la Seda,
-        * reabasteciendo tiendas y retornando robots a sus posiciones iniciales.
-        */
-       public void reboot(){
-            resupplyStores();
-            returnRobots();
-            System.out.println("Ruta de seda reiniciada - Tiendas reabastecidas y robots reposicionados");
-       }
+     * Reinicia la simulación de la Ruta de la Seda,
+     * reabasteciendo tiendas y retornando robots a sus posiciones iniciales.
+     */
+    public void reboot(){
+        resupplyStores();
+        returnRobots();
+        System.out.println("Ruta de seda reiniciada - Tiendas reabastecidas y robots reposicionados");
+    }
 
     /**
      * Calcula la ganancia total obtenida por los robots.

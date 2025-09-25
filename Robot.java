@@ -56,4 +56,5 @@ public class Robot {
             robot.makeInvisible();
         }
     }
+    
 }
