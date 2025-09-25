@@ -23,7 +23,7 @@ public class SilkRoadC2Test {
      * Verifica que resupplyStores restaure correctamente las tiendas vacías
      */
     @Test
-    public void ResupplyStoresShouldRestoreEmptyStores() {
+    public void ResupplyStoresLRShouldRestoreEmptyStores() {
         silkRoad.placeStore(0, 100);
         silkRoad.placeStore(1, 50);
         
@@ -46,7 +46,7 @@ public class SilkRoadC2Test {
      * Verifica que resupplyStores no afecte tiendas que ya tienen tenges
      */
     @Test
-    public void ResupplyStoresShouldNotAffectNonEmptyStores() {
+    public void ResupplyStoresLRShouldNotAffectNonEmptyStores() {
         silkRoad.placeStore(0, 100);
         silkRoad.placeStore(1, 75);
         
@@ -68,7 +68,7 @@ public class SilkRoadC2Test {
      * Verifica que showRobotProfits muestre correctamente las ganancias de un robot
      */
     @Test
-    public void ShowRobotProfitsShouldDisplayCorrectProfits() {
+    public void ShowRobotProfitsLRShouldDisplayCorrectProfits() {
         silkRoad.placeRobot(0);
         silkRoad.placeStore(1, 50);
         
@@ -83,7 +83,7 @@ public class SilkRoadC2Test {
      * Verifica que showRobotProfits no se ejecute cuando no hay robots
      */
     @Test
-    public void ShowRobotProfitsShouldNotExecuteWithoutRobots() {
+    public void ShowRobotProfitsLRShouldNotExecuteWithoutRobots() {
         silkRoad.placeStore(1, 50);
         
         silkRoad.moveRobot(0, 1);
@@ -99,7 +99,7 @@ public class SilkRoadC2Test {
      * Verifica que getTimesStoresEmptied muestre correctamente las veces que cada tienda ha sido vaciada
      */
     @Test
-    public void GetTimesStoresEmptiedShouldDisplayEmptiedCount() {
+    public void GetTimesStoresEmptiedLRShouldDisplayEmptiedCount() {
         silkRoad.placeStore(0, 30);
         silkRoad.placeStore(2, 40);
         
@@ -116,7 +116,7 @@ public class SilkRoadC2Test {
      * Verifica que getTimesStoresEmptied no falle cuando no hay tiendas
      */
     @Test
-    public void GetTimesStoresEmptiedShouldHandleNoStores() {
+    public void GetTimesStoresEmptiedLRShouldHandleNoStores() {
         silkRoad.getTimesStoresEmptied();
         
         String output = outContent.toString();
@@ -131,7 +131,7 @@ public class SilkRoadC2Test {
      * Verifica que getRobotHighestProfits identifique correctamente el robot con mayores ganancias
      */
     @Test
-    public void GetRobotHighestProfitsShouldIdentifyTopRobot() {
+    public void GetRobotHighestProfitsLRShouldIdentifyTopRobot() {
         silkRoad.placeRobot(0);
         silkRoad.placeRobot(2);
         silkRoad.placeStore(1, 100);
@@ -149,7 +149,7 @@ public class SilkRoadC2Test {
      * Verifica que getRobotHighestProfits maneje correctamente cuando hay empate
      */
     @Test
-    public void GetRobotHighestProfitsShouldHandleTie() {
+    public void GetRobotHighestProfitsLRShouldHandleTie() {
         silkRoad.placeRobot(0);
         silkRoad.placeRobot(2);
         silkRoad.placeStore(1, 50);
@@ -170,7 +170,7 @@ public class SilkRoadC2Test {
      * Verifica que getRobotHighestProfits maneje correctamente cuando no hay robots
      */
     @Test
-    public void GetRobotHighestProfitsShouldHandleNoRobots() {
+    public void GetRobotHighestProfitsLRShouldHandleNoRobots() {
         silkRoad.getRobotHighestProfits();
         
         String output = outContent.toString();
@@ -184,7 +184,7 @@ public class SilkRoadC2Test {
      * Simula un ciclo completo: robot vacía tienda, se reabastece, se consulta historial
      */
     @Test
-    public void simulator1() {
+    public void simulator1LR() {
         silkRoad.placeStore(1, 75);
         silkRoad.placeStore(3, 50);
         silkRoad.placeRobot(0);
@@ -223,7 +223,7 @@ public class SilkRoadC2Test {
      * Simula competencia entre robots, identificación del ganador y reinicio del sistema
      */
     @Test
-    public void simulator2() {
+    public void simulator2LR() {
         silkRoad.placeStore(1, 100);
         silkRoad.placeStore(4, 30);
         silkRoad.placeStore(7, 80);
@@ -269,7 +269,7 @@ public class SilkRoadC2Test {
      * Simula el ciclo de vida completo del simulador desde creación hasta finalización
      */
     @Test
-    public void simulator3() {
+    public void simulator3LR() {
         int[] marathonInput = {3,        
                               2, 50,     
                               5, 75,       
